@@ -61,6 +61,10 @@ data "vault_generic_secret" "security_s3_buckets" {
   path = "aws-accounts/security/s3"
 }
 
+data "vault_generic_secret" "cic_ec2_data" {
+  path = "applications/${var.aws_account}-${var.aws_region}/${var.application}/ec2"
+}
+
 data "aws_acm_certificate" "acm_cert" {
   domain = var.domain_name
 }

@@ -80,3 +80,32 @@ variable "cic_desired_capacity" {
   type        = number
   description = "The desired capacity of ASG"
 }
+
+variable "cic_ami_name" {
+  type        = string
+  default     = "docker-ami-*"
+  description = "Name of the AMI to use in the Auto Scaling configuration for CICs"
+}
+
+
+# ------------------------------------------------------------------------------
+# CIC ALB Variables
+# ------------------------------------------------------------------------------
+
+variable "cic_application_port" {
+  type        = number
+  default     = 21000
+  description = "Target group backend port"
+}
+
+variable "cic_health_check_path" {
+  type        = string
+  default     = "/"
+  description = "Target group health check path"
+}
+
+variable "domain_name" {
+  type        = string
+  default     = "*.companieshouse.gov.uk"
+  description = "Domain Name for ACM Certificate"
+}
