@@ -14,13 +14,6 @@ data "aws_subnet_ids" "application" {
   }
 }
 
-data "aws_security_group" "rds_shared" {
-  filter {
-    name   = "group-name"
-    values = ["sgr-rds-shared-001*"]
-  }
-}
-
 data "aws_security_group" "nagios_shared" {
   filter {
     name   = "group-name"
@@ -33,32 +26,12 @@ data "aws_route53_zone" "private_zone" {
   private_zone = true
 }
 
-data "aws_kms_key" "rds" {
-  key_id = "alias/kms-rds"
-}
-
 data "vault_generic_secret" "account_ids" {
   path = "aws-accounts/account-ids"
 }
 
-data "vault_generic_secret" "s3_releases" {
-  path = "aws-accounts/shared-services/s3"
-}
-
 data "vault_generic_secret" "internal_cidrs" {
   path = "aws-accounts/network/internal_cidr_ranges"
-}
-
-data "vault_generic_secret" "kms_keys" {
-  path = "aws-accounts/${var.aws_account}/kms"
-}
-
-data "vault_generic_secret" "security_kms_keys" {
-  path = "aws-accounts/security/kms"
-}
-
-data "vault_generic_secret" "security_s3_buckets" {
-  path = "aws-accounts/security/s3"
 }
 
 data "vault_generic_secret" "cic_ec2_data" {
