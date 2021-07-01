@@ -8,7 +8,14 @@ variable "hashicorp_vault_secret_id" {
   type = string
 }
 
+variable "vault_address" {
+  description = "The address of Hashicorp Vault"
+  type = string
+}
+
 provider "vault" {
+  address = var.vault_address
+  
   auth_login {
     path = "auth/approle/login"
 
