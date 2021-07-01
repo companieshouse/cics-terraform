@@ -48,6 +48,7 @@ module "cics1_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
+  target_group_arns              = list(module.cics_internal_alb.target_group_arns[0])
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 
@@ -58,6 +59,10 @@ module "cics1_asg" {
       "config-base-path", "configbucket-todo"
     )
   )
+
+  depends_on = [
+    module.cics_internal_alb
+  ]
 }
 
 # ASG Module for cic2
@@ -96,6 +101,7 @@ module "cics2_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
+  target_group_arns              = list(module.cics_internal_alb.target_group_arns[1])
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 
@@ -106,4 +112,8 @@ module "cics2_asg" {
       "config-base-path", "configbucket-todo"
     )
   )
+
+  depends_on = [
+    module.cics_internal_alb
+  ]
 }
