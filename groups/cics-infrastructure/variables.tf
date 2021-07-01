@@ -1,17 +1,4 @@
 # ------------------------------------------------------------------------------
-# Vault Variables
-# ------------------------------------------------------------------------------
-variable "vault_username" {
-  type        = string
-  description = "Username for connecting to Vault - usually supplied through TF_VARS"
-}
-
-variable "vault_password" {
-  type        = string
-  description = "Password for connecting to Vault - usually supplied through TF_VARS"
-}
-
-# ------------------------------------------------------------------------------
 # AWS Variables
 # ------------------------------------------------------------------------------
 variable "aws_region" {
@@ -61,27 +48,27 @@ variable "environment" {
 # CIC ASG Variables
 # ------------------------------------------------------------------------------
 
-variable "cic_instance_size" {
+variable "cics_instance_size" {
   type        = string
   description = "The size of the ec2 instances to build"
 }
 
-variable "cic_min_size" {
+variable "cics_min_size" {
   type        = number
   description = "The min size of the ASG"
 }
 
-variable "cic_max_size" {
+variable "cics_max_size" {
   type        = number
   description = "The max size of the ASG"
 }
 
-variable "cic_desired_capacity" {
+variable "cics_desired_capacity" {
   type        = number
   description = "The desired capacity of ASG"
 }
 
-variable "cic_ami_name" {
+variable "cics_ami_name" {
   type        = string
   default     = "docker-ami-*"
   description = "Name of the AMI to use in the Auto Scaling configuration for CICs"
@@ -92,13 +79,13 @@ variable "cic_ami_name" {
 # CIC ALB Variables
 # ------------------------------------------------------------------------------
 
-variable "cic_application_port" {
+variable "cics_application_port" {
   type        = number
   default     = 21000
   description = "Target group backend port"
 }
 
-variable "cic_health_check_path" {
+variable "cics_health_check_path" {
   type        = string
   default     = "/"
   description = "Target group health check path"

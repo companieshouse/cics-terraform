@@ -34,7 +34,7 @@ data "vault_generic_secret" "internal_cidrs" {
   path = "aws-accounts/network/internal_cidr_ranges"
 }
 
-data "vault_generic_secret" "cic_ec2_data" {
+data "vault_generic_secret" "cics_ec2_data" {
   path = "applications/${var.aws_account}-${var.aws_region}/${var.application}/ec2"
 }
 
@@ -44,12 +44,12 @@ data "aws_acm_certificate" "acm_cert" {
 
 data "aws_ami" "cic" {
   owners      = [data.vault_generic_secret.account_ids.data["development"]]
-  most_recent = var.cic_ami_name == "docker-ami-*" ? true : false
+  most_recent = var.cics_ami_name == "docker-ami-*" ? true : false
 
   filter {
     name = "name"
     values = [
-      var.cic_ami_name,
+      var.cics_ami_name,
     ]
   }
 
@@ -61,17 +61,17 @@ data "aws_ami" "cic" {
   }
 }
 
-data "template_file" "cic_userdata" {
-  template = file("${path.module}/templates/cic_user_data.tpl")
+data "template_file" "cics_userdata" {
+  template = file("${path.module}/templates/cics_user_data.tpl")
 }
 
-data "template_cloudinit_config" "cic_userdata_config" {
+data "template_cloudinit_config" "cics_userdata_config" {
   gzip          = true
   base64_encode = true
 
   part {
     content_type = "text/x-shellscript"
-    content      = data.template_file.cic_userdata.rendered
+    content      = data.template_file.cics_userdata.rendered
   }
 
 }

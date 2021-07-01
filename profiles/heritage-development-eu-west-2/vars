@@ -8,11 +8,11 @@ account = "hdev"
 region  = "euw2"
 
 # Application details
-application = "cic"
+application = "cics"
 environment = "development"
 
 # CIC ASG settings
-cic_instance_size = "t3.medium"
-cic_min_size = 1
-cic_max_size = 1
-cic_desired_capacity = 1
+cics_instance_size = "t3.medium"
+cics_min_size = 1
+cics_max_size = 1
+cics_desired_capacity = 1

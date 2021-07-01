@@ -1,4 +1,4 @@
-module "cic_internal_alb_security_group" {
+module "cics_internal_alb_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 3.0"
 
@@ -12,7 +12,7 @@ module "cic_internal_alb_security_group" {
 }
 
 
-module "cic_internal_alb" {
+module "cics_internal_alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "~> 5.0"
 
@@ -22,7 +22,7 @@ module "cic_internal_alb" {
   load_balancer_type         = "application"
   enable_deletion_protection = true
 
-  security_groups = [module.cic_internal_alb_security_group.this_security_group_id]
+  security_groups = [module.cics_internal_alb_security_group.this_security_group_id]
   subnets         = data.aws_subnet_ids.application.ids //Change to just single subnet
 
   http_tcp_listeners = [
@@ -52,14 +52,14 @@ module "cic_internal_alb" {
     {
       name                 = "tg-${var.application}-internal-001"
       backend_protocol     = "HTTP"
-      backend_port         = var.cic_application_port
+      backend_port         = var.cics_application_port
       target_type          = "instance"
       deregistration_delay = 10
       health_check = {
         enabled             = true
         interval            = 30
-        path                = var.cic_health_check_path
-        port                = var.cic_application_port
+        path                = var.cics_health_check_path
+        port                = var.cics_application_port
         healthy_threshold   = 3
         unhealthy_threshold = 3
         timeout             = 6
@@ -73,14 +73,14 @@ module "cic_internal_alb" {
     {
       name                 = "tg-${var.application}-internal-002"
       backend_protocol     = "HTTP"
-      backend_port         = var.cic_application_port
+      backend_port         = var.cics_application_port
       target_type          = "instance"
       deregistration_delay = 10
       health_check = {
         enabled             = true
         interval            = 30
-        path                = var.cic_health_check_path
-        port                = var.cic_application_port
+        path                = var.cics_health_check_path
+        port                = var.cics_application_port
         healthy_threshold   = 3
         unhealthy_threshold = 3
         timeout             = 6
