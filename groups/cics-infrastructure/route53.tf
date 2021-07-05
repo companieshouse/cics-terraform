@@ -4,8 +4,8 @@ resource "aws_route53_record" "cics_alb_internal" {
   type    = "A"
 
   alias {
-    name                   = module.cics_internal_alb.this_lb_dns_name
-    zone_id                = module.cics_internal_alb.this_lb_zone_id
+    name                   = aws_lb.cics.dns_name
+    zone_id                = aws_lb.cics.zone_id
     evaluate_target_health = true
   }
 }

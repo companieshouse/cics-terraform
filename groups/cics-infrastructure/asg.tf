@@ -28,7 +28,7 @@ module "cics_asg_security_group" {
       source_security_group_id = module.cics_internal_alb_security_group.this_security_group_id
     }
   ]
-  
+
   egress_rules = ["all-all"]
 }
 
@@ -68,7 +68,7 @@ module "cics1_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = [module.cics_internal_alb.target_group_arns[0]]
+  target_group_arns              = [aws_lb_target_group.cics_app_1.arn]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 
@@ -80,9 +80,6 @@ module "cics1_asg" {
     )
   )
 
-  depends_on = [
-    module.cics_internal_alb
-  ]
 }
 
 # ASG Module for cic2
@@ -121,7 +118,7 @@ module "cics2_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = [module.cics_internal_alb.target_group_arns[1]]
+  target_group_arns              = [aws_lb_target_group.cics_app_2.arn]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 
@@ -132,8 +129,4 @@ module "cics2_asg" {
       "config-base-path", "configbucket-todo"
     )
   )
-
-  depends_on = [
-    module.cics_internal_alb
-  ]
 }
