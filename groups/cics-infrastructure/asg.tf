@@ -9,6 +9,26 @@ module "cics_asg_security_group" {
   description = "Security group for the ${var.application} asg"
   vpc_id      = data.aws_vpc.vpc.id
 
+  ingress_cidr_blocks = local.admin_cidrs
+  ingress_rules = ["ssh-tcp"]
+
+  ingress_with_source_security_group_id = [
+    {
+      from_port   = 21000
+      to_port     = 21000
+      protocol    = "tcp"
+      description = "Apache port"
+      source_security_group_id = module.cics_internal_alb_security_group.this_security_group_id
+    },
+    {
+      from_port   = 21001
+      to_port     = 21001
+      protocol    = "tcp"
+      description = "WebLogic administration console port"
+      source_security_group_id = module.cics_internal_alb_security_group.this_security_group_id
+    }
+  ]
+  
   egress_rules = ["all-all"]
 }
 
@@ -19,7 +39,7 @@ module "cics1_asg" {
   name = "${var.application}-cic1"
   # Launch configuration
   lc_name       = "${var.application}-cics1-launchconfig"
-  image_id      = data.aws_ami.cic.id
+  image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
     module.cics_asg_security_group.this_security_group_id,
@@ -48,7 +68,7 @@ module "cics1_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = list(module.cics_internal_alb.target_group_arns[0])
+  target_group_arns              = [module.cics_internal_alb.target_group_arns[0]]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 
@@ -72,7 +92,7 @@ module "cics2_asg" {
   name = "${var.application}-cics2"
   # Launch configuration
   lc_name       = "${var.application}-cics2-launchconfig"
-  image_id      = data.aws_ami.cic.id
+  image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
     module.cics_asg_security_group.this_security_group_id,
@@ -101,7 +121,7 @@ module "cics2_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = list(module.cics_internal_alb.target_group_arns[1])
+  target_group_arns              = [module.cics_internal_alb.target_group_arns[1]]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 

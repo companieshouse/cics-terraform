@@ -42,7 +42,7 @@ data "aws_acm_certificate" "acm_cert" {
   domain = var.domain_name
 }
 
-data "aws_ami" "cic" {
+data "aws_ami" "cics" {
   owners      = [data.vault_generic_secret.account_ids.data["development"]]
   most_recent = var.cics_ami_name == "docker-ami-*" ? true : false
 
