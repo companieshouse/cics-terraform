@@ -16,22 +16,47 @@ resource "aws_lb" "cics" {
   internal           = true
   load_balancer_type = "application"
   security_groups    = [module.cics_internal_alb_security_group.this_security_group_id]
-  subnets            = data.aws_subnet_ids.application.ids //Change to just single subnet possibly
+  subnets            = data.aws_subnet_ids.application.ids
 
   enable_deletion_protection = false
 }
 
-resource "aws_lb_target_group" "cics_app_1" {
-  name                  = "tg-${var.application}-app-internal-001"
-  vpc_id                = data.aws_vpc.vpc.id
-  port                  = var.cics_application_port
-  protocol              = "HTTP"
-  target_type           = "instance"
-  deregistration_delay  = 10
+resource "aws_lb_target_group" "cics_app" {
+  name                 = "tg-${var.application}-app-internal"
+  vpc_id               = data.aws_vpc.vpc.id
+  port                 = var.cics_application_port
+  protocol             = "HTTP"
+  target_type          = "instance"
+  deregistration_delay = 10
   health_check {
     enabled             = true
     interval            = 30
-    path                = var.cics_health_check_path
+    path                = var.cics_app_health_check_path
+    port                = var.cics_application_port
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    timeout             = 6
+    protocol            = "HTTP"
+    matcher             = "200-399"
+  }
+  stickiness {
+    enabled         = true
+    type            = "lb_cookie"
+    cookie_duration = 86400
+  }
+}
+
+resource "aws_lb_target_group" "cics_app_1" {
+  name                 = "tg-${var.application}-app-internal-001"
+  vpc_id               = data.aws_vpc.vpc.id
+  port                 = var.cics_application_port
+  protocol             = "HTTP"
+  target_type          = "instance"
+  deregistration_delay = 10
+  health_check {
+    enabled             = true
+    interval            = 30
+    path                = var.cics_app_health_check_path
     port                = var.cics_application_port
     healthy_threshold   = 3
     unhealthy_threshold = 3
@@ -42,17 +67,57 @@ resource "aws_lb_target_group" "cics_app_1" {
 }
 
 resource "aws_lb_target_group" "cics_app_2" {
-  name                  = "tg-${var.application}-app-internal-002"
-  vpc_id                = data.aws_vpc.vpc.id
-  port                  = var.cics_application_port
-  protocol              = "HTTP"
-  target_type           = "instance"
-  deregistration_delay  = 10
+  name                 = "tg-${var.application}-app-internal-002"
+  vpc_id               = data.aws_vpc.vpc.id
+  port                 = var.cics_application_port
+  protocol             = "HTTP"
+  target_type          = "instance"
+  deregistration_delay = 10
   health_check {
     enabled             = true
     interval            = 30
-    path                = var.cics_health_check_path
+    path                = var.cics_app_health_check_path
     port                = var.cics_application_port
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    timeout             = 6
+    protocol            = "HTTP"
+    matcher             = "200-399"
+  }
+}
+
+resource "aws_lb_target_group" "cics_admin_1" {
+  name                 = "tg-${var.application}-admin-internal-001"
+  vpc_id               = data.aws_vpc.vpc.id
+  port                 = var.cics_admin_port
+  protocol             = "HTTP"
+  target_type          = "instance"
+  deregistration_delay = 10
+  health_check {
+    enabled             = true
+    interval            = 30
+    path                = var.cics_admin_health_check_path
+    port                = var.cics_admin_port
+    healthy_threshold   = 3
+    unhealthy_threshold = 3
+    timeout             = 6
+    protocol            = "HTTP"
+    matcher             = "200-399"
+  }
+}
+
+resource "aws_lb_target_group" "cics_admin_2" {
+  name                 = "tg-${var.application}-admin-internal-002"
+  vpc_id               = data.aws_vpc.vpc.id
+  port                 = var.cics_admin_port
+  protocol             = "HTTP"
+  target_type          = "instance"
+  deregistration_delay = 10
+  health_check {
+    enabled             = true
+    interval            = 30
+    path                = var.cics_admin_health_check_path
+    port                = var.cics_admin_port
     healthy_threshold   = 3
     unhealthy_threshold = 3
     timeout             = 6
@@ -67,11 +132,11 @@ resource "aws_lb_listener" "cics_http" {
   protocol          = "HTTP"
 
   default_action {
-    type              = "redirect"
+    type = "redirect"
     redirect {
-      port              = "443"
-      protocol          = "HTTPS"
-      status_code       = "HTTP_301"
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
     }
   }
 }
@@ -93,26 +158,31 @@ resource "aws_lb_listener" "cics_https" {
   }
 }
 
-resource "aws_lb_listener_rule" "cics_app_host_based_routing" {
+resource "aws_lb_listener_rule" "cics_app" {
   listener_arn = aws_lb_listener.cics_https.arn
-  priority     = 99
+  priority     = 10
 
   action {
     type = "forward"
     forward {
       target_group {
+        arn    = aws_lb_target_group.cics_app.arn
+        weight = 100
+      }
+
+      target_group {
         arn    = aws_lb_target_group.cics_app_1.arn
-        weight = 50
+        weight = 0
       }
 
       target_group {
         arn    = aws_lb_target_group.cics_app_2.arn
-        weight = 50
+        weight = 0
       }
 
       stickiness {
         enabled  = true
-        duration = 3600
+        duration = 86400
       }
     }
   }
@@ -120,6 +190,38 @@ resource "aws_lb_listener_rule" "cics_app_host_based_routing" {
   condition {
     host_header {
       values = ["cics.*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "cics_admin_1" {
+  listener_arn = aws_lb_listener.cics_https.arn
+  priority     = 20
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.cics_admin_1.arn
+  }
+
+  condition {
+    host_header {
+      values = ["cics-admin-1.*"]
+    }
+  }
+}
+
+resource "aws_lb_listener_rule" "cics_admin_2" {
+  listener_arn = aws_lb_listener.cics_https.arn
+  priority     = 30
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.cics_admin_2.arn
+  }
+
+  condition {
+    host_header {
+      values = ["cics-admin-2.*"]
     }
   }
 }

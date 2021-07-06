@@ -82,13 +82,25 @@ variable "cics_ami_name" {
 variable "cics_application_port" {
   type        = number
   default     = 21000
-  description = "Target group backend port"
+  description = "Target group backend port for application"
 }
 
-variable "cics_health_check_path" {
+variable "cics_admin_port" {
+  type        = number
+  default     = 21001
+  description = "Target group backend port for administration"
+}
+
+variable "cics_app_health_check_path" {
   type        = string
   default     = "/"
-  description = "Target group health check path"
+  description = "Target group health check path for application"
+}
+
+variable "cics_admin_health_check_path" {
+  type        = string
+  default     = "/console"
+  description = "Target group health check path for administration console"
 }
 
 variable "domain_name" {

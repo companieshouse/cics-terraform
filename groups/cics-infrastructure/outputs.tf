@@ -1,3 +1,11 @@
 output "cics_app_address_internal" {
-  value = aws_route53_record.cics_alb_internal.fqdn
+  value = aws_route53_record.cics_app.fqdn
+}
+
+output "cics_admin_1_address_internal" {
+  value = aws_route53_record.cics_admin_1.fqdn
+}
+
+output "cics_admin_2_address_internal" {
+  value = aws_route53_record.cics_admin_2.fqdn
 }

@@ -68,7 +68,7 @@ module "cics1_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = [aws_lb_target_group.cics_app_1.arn]
+  target_group_arns              = [aws_lb_target_group.cics_app.arn, aws_lb_target_group.cics_app_1.arn, aws_lb_target_group.cics_admin_1.arn]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 
@@ -118,7 +118,7 @@ module "cics2_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = [aws_lb_target_group.cics_app_2.arn]
+  target_group_arns              = [aws_lb_target_group.cics_app.arn, aws_lb_target_group.cics_app_2.arn, aws_lb_target_group.cics_admin_2.arn]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
 
