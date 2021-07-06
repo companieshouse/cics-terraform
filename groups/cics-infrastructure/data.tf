@@ -42,6 +42,14 @@ data "aws_acm_certificate" "acm_cert" {
   domain = var.domain_name
 }
 
+data "vault_generic_secret" "security_kms_keys" {
+  path = "aws-accounts/security/kms"
+}
+
+data "vault_generic_secret" "security_s3_buckets" {
+  path = "aws-accounts/security/s3"
+}
+
 data "aws_ami" "cics" {
   owners      = [data.vault_generic_secret.account_ids.data["development"]]
   most_recent = var.cics_ami_name == "docker-ami-*" ? true : false
