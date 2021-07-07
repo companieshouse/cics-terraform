@@ -10,21 +10,21 @@ module "cics_asg_security_group" {
   vpc_id      = data.aws_vpc.vpc.id
 
   ingress_cidr_blocks = local.admin_cidrs
-  ingress_rules = ["ssh-tcp"]
+  ingress_rules       = ["ssh-tcp"]
 
   ingress_with_source_security_group_id = [
     {
-      from_port   = 21000
-      to_port     = 21000
-      protocol    = "tcp"
-      description = "Apache port"
+      from_port                = var.cics_application_port
+      to_port                  = var.cics_application_port
+      protocol                 = "tcp"
+      description              = "Apache port"
       source_security_group_id = module.cics_internal_alb_security_group.this_security_group_id
     },
     {
-      from_port   = 21001
-      to_port     = 21001
-      protocol    = "tcp"
-      description = "WebLogic administration console port"
+      from_port                = var.cics_admin_port
+      to_port                  = var.cics_admin_port
+      protocol                 = "tcp"
+      description              = "WebLogic administration console port"
       source_security_group_id = module.cics_internal_alb_security_group.this_security_group_id
     }
   ]
@@ -32,13 +32,13 @@ module "cics_asg_security_group" {
   egress_rules = ["all-all"]
 }
 
-# ASG Module for cic1
+# ASG Module for cics1
 module "cics1_asg" {
   source = "git@github.com:companieshouse/terraform-modules//aws/terraform-aws-autoscaling?ref=tags/1.0.36"
 
-  name = "${var.application}-cic1"
+  name  = "${var.application}1"
   # Launch configuration
-  lc_name       = "${var.application}-cics1-launchconfig"
+  lc_name       = "${var.application}1-launchconfig"
   image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
@@ -54,7 +54,7 @@ module "cics1_asg" {
     },
   ]
   # Auto scaling group
-  asg_name                       = "${var.application}-cics1-asg"
+  asg_name                       = "${var.application}1-asg"
   vpc_zone_identifier            = data.aws_subnet_ids.application.ids
   health_check_type              = "EC2"
   min_size                       = var.cics_min_size
@@ -68,27 +68,30 @@ module "cics1_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = [aws_lb_target_group.cics_app.arn, aws_lb_target_group.cics_app_1.arn, aws_lb_target_group.cics_admin_1.arn]
+  target_group_arns = [
+    aws_lb_target_group.cics_app[0].arn,
+    aws_lb_target_group.cics_app[1].arn,
+    aws_lb_target_group.cics_admin[0].arn
+  ]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
-  user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
+  user_data_base64 = data.template_cloudinit_config.cics_userdata_config.rendered
 
   tags_as_map = merge(
     local.default_tags,
-    map(
-      "app-instance-name", "cics1",
-      "config-base-path", "configbucket-todo"
-    )
+    tomap({
+      app-instance-name = "${var.application}1"
+      config-base-path  = "s3://shared-services.eu-west-2.configs.ch.gov.uk/cic-configs/${var.environment}"
+    })
   )
-
 }
 
-# ASG Module for cic2
+# ASG Module for cics2
 module "cics2_asg" {
   source = "git@github.com:companieshouse/terraform-modules//aws/terraform-aws-autoscaling?ref=tags/1.0.36"
 
-  name = "${var.application}-cics2"
+  name  = "${var.application}2"
   # Launch configuration
-  lc_name       = "${var.application}-cics2-launchconfig"
+  lc_name       = "${var.application}2-launchconfig"
   image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
@@ -104,7 +107,7 @@ module "cics2_asg" {
     },
   ]
   # Auto scaling group
-  asg_name                       = "${var.application}-cics2-asg"
+  asg_name                       = "${var.application}2-asg"
   vpc_zone_identifier            = data.aws_subnet_ids.application.ids
   health_check_type              = "EC2"
   min_size                       = var.cics_min_size
@@ -118,15 +121,19 @@ module "cics2_asg" {
   refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
   termination_policies           = ["OldestLaunchConfiguration"]
-  target_group_arns              = [aws_lb_target_group.cics_app.arn, aws_lb_target_group.cics_app_2.arn, aws_lb_target_group.cics_admin_2.arn]
+  target_group_arns = [
+    aws_lb_target_group.cics_app[0].arn,
+    aws_lb_target_group.cics_app[2].arn,
+    aws_lb_target_group.cics_admin[1].arn
+  ]
   //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
-  user_data_base64               = data.template_cloudinit_config.cics_userdata_config.rendered
+  user_data_base64 = data.template_cloudinit_config.cics_userdata_config.rendered
 
   tags_as_map = merge(
     local.default_tags,
-    map(
-      "app-instance-name", "cics2",
-      "config-base-path", "configbucket-todo"
-    )
+    tomap({
+      app-instance-name = "${var.application}2"
+      config-base-path  = "s3://shared-services.eu-west-2.configs.ch.gov.uk/cic-configs/${var.environment}"
+    })
   )
 }

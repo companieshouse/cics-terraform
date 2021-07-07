@@ -22,12 +22,14 @@ resource "aws_lb" "cics" {
 }
 
 resource "aws_lb_target_group" "cics_app" {
-  name                 = "tg-${var.application}-app-internal"
+  count                = var.cics_asg_count + 1
+  name                 = "tg-${var.application}-app-internal-00${count.index}"
   vpc_id               = data.aws_vpc.vpc.id
   port                 = var.cics_application_port
   protocol             = "HTTP"
   target_type          = "instance"
   deregistration_delay = 10
+
   health_check {
     enabled             = true
     interval            = 30
@@ -39,6 +41,7 @@ resource "aws_lb_target_group" "cics_app" {
     protocol            = "HTTP"
     matcher             = "200-399"
   }
+
   stickiness {
     enabled         = true
     type            = "lb_cookie"
@@ -46,68 +49,9 @@ resource "aws_lb_target_group" "cics_app" {
   }
 }
 
-resource "aws_lb_target_group" "cics_app_1" {
-  name                 = "tg-${var.application}-app-internal-001"
-  vpc_id               = data.aws_vpc.vpc.id
-  port                 = var.cics_application_port
-  protocol             = "HTTP"
-  target_type          = "instance"
-  deregistration_delay = 10
-  health_check {
-    enabled             = true
-    interval            = 30
-    path                = var.cics_app_health_check_path
-    port                = var.cics_application_port
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    timeout             = 6
-    protocol            = "HTTP"
-    matcher             = "200-399"
-  }
-}
-
-resource "aws_lb_target_group" "cics_app_2" {
-  name                 = "tg-${var.application}-app-internal-002"
-  vpc_id               = data.aws_vpc.vpc.id
-  port                 = var.cics_application_port
-  protocol             = "HTTP"
-  target_type          = "instance"
-  deregistration_delay = 10
-  health_check {
-    enabled             = true
-    interval            = 30
-    path                = var.cics_app_health_check_path
-    port                = var.cics_application_port
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    timeout             = 6
-    protocol            = "HTTP"
-    matcher             = "200-399"
-  }
-}
-
-resource "aws_lb_target_group" "cics_admin_1" {
-  name                 = "tg-${var.application}-admin-internal-001"
-  vpc_id               = data.aws_vpc.vpc.id
-  port                 = var.cics_admin_port
-  protocol             = "HTTP"
-  target_type          = "instance"
-  deregistration_delay = 10
-  health_check {
-    enabled             = true
-    interval            = 30
-    path                = var.cics_admin_health_check_path
-    port                = var.cics_admin_port
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    timeout             = 6
-    protocol            = "HTTP"
-    matcher             = "200-399"
-  }
-}
-
-resource "aws_lb_target_group" "cics_admin_2" {
-  name                 = "tg-${var.application}-admin-internal-002"
+resource "aws_lb_target_group" "cics_admin" {
+  count                = var.cics_asg_count
+  name                 = "tg-${var.application}-admin-internal-00${count.index + 1}"
   vpc_id               = data.aws_vpc.vpc.id
   port                 = var.cics_admin_port
   protocol             = "HTTP"
@@ -166,18 +110,21 @@ resource "aws_lb_listener_rule" "cics_app" {
     type = "forward"
     forward {
       target_group {
-        arn    = aws_lb_target_group.cics_app.arn
+        arn    = aws_lb_target_group.cics_app[0].arn
         weight = 100
       }
 
       target_group {
-        arn    = aws_lb_target_group.cics_app_1.arn
+        arn    = aws_lb_target_group.cics_app[1].arn
         weight = 0
       }
 
-      target_group {
-        arn    = aws_lb_target_group.cics_app_2.arn
-        weight = 0
+      dynamic "target_group" {
+        for_each = var.cics_asg_count > 1 ? [1] : []
+        content {
+          arn    = aws_lb_target_group.cics_app[2].arn
+          weight = 0
+        }
       }
 
       stickiness {
@@ -194,34 +141,19 @@ resource "aws_lb_listener_rule" "cics_app" {
   }
 }
 
-resource "aws_lb_listener_rule" "cics_admin_1" {
+resource "aws_lb_listener_rule" "cics_admin" {
+  count        = var.cics_asg_count
   listener_arn = aws_lb_listener.cics_https.arn
-  priority     = 20
+  priority     = 20 + count.index
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.cics_admin_1.arn
+    target_group_arn = aws_lb_target_group.cics_admin[count.index].arn
   }
 
   condition {
     host_header {
-      values = ["cics-admin-1.*"]
-    }
-  }
-}
-
-resource "aws_lb_listener_rule" "cics_admin_2" {
-  listener_arn = aws_lb_listener.cics_https.arn
-  priority     = 30
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.cics_admin_2.arn
-  }
-
-  condition {
-    host_header {
-      values = ["cics-admin-2.*"]
+      values = ["cics-admin-${count.index + 1}.*"]
     }
   }
 }

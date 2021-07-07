@@ -55,17 +55,25 @@ variable "cics_instance_size" {
 
 variable "cics_min_size" {
   type        = number
-  description = "The min size of the ASG"
+  default     = 1
+  description = "The min size of the ASG - always 1"
 }
 
 variable "cics_max_size" {
   type        = number
-  description = "The max size of the ASG"
+  default     = 1
+  description = "The max size of the ASG - always 1"
 }
 
 variable "cics_desired_capacity" {
   type        = number
-  description = "The desired capacity of ASG"
+  default     = 1
+  description = "The desired capacity of ASG - always 1"
+}
+
+variable "cics_asg_count" {
+  type        = number
+  description = "The number of ASGs - typically 1 for dev and 2 for staging/live"
 }
 
 variable "cics_ami_name" {
@@ -73,7 +81,6 @@ variable "cics_ami_name" {
   default     = "docker-ami-*"
   description = "Name of the AMI to use in the Auto Scaling configuration for CICs"
 }
-
 
 # ------------------------------------------------------------------------------
 # CIC ALB Variables

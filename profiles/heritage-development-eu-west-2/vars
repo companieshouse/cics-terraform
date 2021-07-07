@@ -11,8 +11,6 @@ region  = "euw2"
 application = "cics"
 environment = "development"
 
-# CIC ASG settings
+# ASG settings
+cics_asg_count = 2
 cics_instance_size = "t3.medium"
-cics_min_size = 1
-cics_max_size = 1
-cics_desired_capacity = 1
