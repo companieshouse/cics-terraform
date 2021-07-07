@@ -7,5 +7,5 @@ output "cics_admin_1_address_internal" {
 }
 
 output "cics_admin_2_address_internal" {
-  value = aws_route53_record.cics_admin[1].fqdn
+  value = var.cics_asg_count > 1 ? aws_route53_record.cics_admin[1].fqdn : null
 }

@@ -89,6 +89,7 @@ module "cics1_asg" {
 module "cics2_asg" {
   source = "git@github.com:companieshouse/terraform-modules//aws/terraform-aws-autoscaling?ref=tags/1.0.36"
 
+  count = var.cics_asg_count > 1 ? 1 : 0
   name  = "${var.application}2"
   # Launch configuration
   lc_name       = "${var.application}2-launchconfig"
