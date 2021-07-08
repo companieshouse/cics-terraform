@@ -12,5 +12,5 @@ application = "cics"
 environment = "development"
 
 # ASG settings
-cics_asg_count = 2
+cics_asg_count = 1
 cics_instance_size = "t3.medium"

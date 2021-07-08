@@ -5,7 +5,6 @@ module "cics_profile" {
   enable_SSM = true
 
   s3_buckets_write  = [local.session_manager_bucket_name]
-  instance_asg_arns = [module.cics1_asg.this_autoscaling_group_arn, module.cics2_asg.this_autoscaling_group_arn]
 
   kms_key_refs = [
     "alias/${var.account}/${var.region}/ebs",
@@ -42,6 +41,14 @@ module "cics_profile" {
         "ecr:GetLifecyclePolicyPreview",
         "ecr:ListTagsForResource",
         "ecr:DescribeImageScanFindings"
+      ]
+    },
+    {
+      sid       = "AllowReadOnlyDescribeAccessToEC2",
+      effect    = "Allow",
+      resources = ["*"],
+      actions = [
+        "ec2:Describe*"
       ]
     }
   ]

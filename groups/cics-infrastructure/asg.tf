@@ -36,7 +36,7 @@ module "cics_asg_security_group" {
 module "cics1_asg" {
   source = "git@github.com:companieshouse/terraform-modules//aws/terraform-aws-autoscaling?ref=tags/1.0.36"
 
-  name  = "${var.application}1"
+  name = "${var.application}1"
   # Launch configuration
   lc_name       = "${var.application}1-launchconfig"
   image_id      = data.aws_ami.cics.id
@@ -73,8 +73,8 @@ module "cics1_asg" {
     aws_lb_target_group.cics_app[1].arn,
     aws_lb_target_group.cics_admin[0].arn
   ]
-  //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
-  user_data_base64 = data.template_cloudinit_config.cics_userdata_config.rendered
+  iam_instance_profile = module.cics_profile.aws_iam_instance_profile.name
+  user_data_base64     = data.template_cloudinit_config.cics_userdata_config.rendered
 
   tags_as_map = merge(
     local.default_tags,
@@ -127,8 +127,8 @@ module "cics2_asg" {
     aws_lb_target_group.cics_app[2].arn,
     aws_lb_target_group.cics_admin[1].arn
   ]
-  //iam_instance_profile           = module.cics_profile.aws_iam_instance_profile.name
-  user_data_base64 = data.template_cloudinit_config.cics_userdata_config.rendered
+  iam_instance_profile = module.cics_profile.aws_iam_instance_profile.name
+  user_data_base64     = data.template_cloudinit_config.cics_userdata_config.rendered
 
   tags_as_map = merge(
     local.default_tags,
