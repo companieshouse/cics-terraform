@@ -1,0 +1,16 @@
+# Account details
+aws_profile = "heritage-staging-eu-west-2"
+aws_region  = "eu-west-2"
+aws_account = "heritage-staging"
+
+# Account shorthand
+account = "hstg"
+region  = "euw2"
+
+# Application details
+application = "cics"
+environment = "staging"
+
+# ASG settings
+cics_asg_count = 1
+cics_instance_size = "t3.medium"

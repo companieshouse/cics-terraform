@@ -1,0 +1,16 @@
+# Account details
+aws_profile = "heritage-live-eu-west-2"
+aws_region  = "eu-west-2"
+aws_account = "heritage-live"
+
+# Account shorthand
+account = "hlive"
+region  = "euw2"
+
+# Application details
+application = "cics"
+environment = "live"
+
+# ASG settings
+cics_asg_count = 2
+cics_instance_size = "t3.medium"
