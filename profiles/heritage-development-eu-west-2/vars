@@ -1,0 +1,16 @@
+# Account details
+aws_profile = "heritage-development-eu-west-2"
+aws_region  = "eu-west-2"
+aws_account = "heritage-development"
+
+# Account shorthand
+account = "hdev"
+region  = "euw2"
+
+# Application details
+application = "cics"
+environment = "development"
+
+# ASG settings
+cics_asg_count = 1
+cics_instance_size = "t3.medium"
