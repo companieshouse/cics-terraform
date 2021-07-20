@@ -14,3 +14,12 @@ environment = "development"
 # ASG settings
 cics_asg_count = 1
 cics_instance_size = "t3.medium"
+
+# CVO NFS Mounts
+nfs_server = "10.104.9.145"
+nfs_mount_destination_parent_dir = "/mnt/nfs"
+nfs_mounts = {
+  cics = {
+    local_mount_point = "cics"
+  }
+}

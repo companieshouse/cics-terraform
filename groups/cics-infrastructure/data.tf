@@ -71,6 +71,10 @@ data "aws_ami" "cics" {
 
 data "template_file" "cics_userdata" {
   template = file("${path.module}/templates/cics_user_data.tpl")
+  vars = {
+    ANSIBLE_INPUTS = jsonencode(local.userdata_ansible_inputs)
+  }
+
 }
 
 data "template_cloudinit_config" "cics_userdata_config" {
