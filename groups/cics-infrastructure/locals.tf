@@ -16,4 +16,10 @@ locals {
     Region      = var.aws_region
     Account     = var.aws_account
   }
+
+  userdata_ansible_inputs = {
+    default_nfs_server_address = var.nfs_server
+    mounts_parent_dir          = var.nfs_mount_destination_parent_dir
+    mounts                     = var.nfs_mounts
+  }
 }
