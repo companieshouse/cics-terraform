@@ -45,11 +45,11 @@ cloudwatch_logs = {
     log_group_retention = 7
   }
 
-	"start-up.log" = {
-		file_path = "/home/ec2-user"
-		file_name = "start-up.log"
-		log_group_retention = 7
-	}
+  "start-up.log" = {
+    file_path = "/home/ec2-user"
+    file_name = "start-up.log"
+    log_group_retention = 7
+  }
 
   "ssm-errors" = {
     file_path = "/var/log/amazon/ssm"
@@ -63,79 +63,81 @@ cloudwatch_logs = {
     log_group_retention = 7
   }
 
-	"apache-access" = {
-		file_path = "NFSPATH/running-servers/apache"
-		file_name = "access.log"
-		log_group_retention = 7
-	}
-	"apache-error" = {
-		file_path = "NFSPATH/running-servers/apache"
-		file_name = "error.log"
-		log_group_retention = 7
-	}
+  "apache-access" = {
+    file_path = "NFSPATH/running-servers/apache"
+    file_name = "access.log"
+    log_group_retention = 7
+  }
 
-	"apache-admin-access" = {
-		file_path = "NFSPATH/running-servers/apache"
-		file_name = "admin-access.log"
-		log_group_retention = 7
-	}
-	"apache-admin-error" = {
-		file_path = "NFSPATH/running-servers/apache"
-		file_name = "admin-error.log"
-		log_group_retention = 7
-	}
+  "apache-error" = {
+    file_path = "NFSPATH/running-servers/apache"
+    file_name = "error.log"
+    log_group_retention = 7
+  }
 
-	"wlserver1-access" = {
-		file_path = "NFSPATH/running-servers/wlserver1/logs"
-		file_name = "access.log"
-		log_group_retention = 7
-	}
+  "apache-admin-access" = {
+    file_path = "NFSPATH/running-servers/apache"
+    file_name = "admin-access.log"
+    log_group_retention = 7
+  }
+	
+  "apache-admin-error" = {
+    file_path = "NFSPATH/running-servers/apache"
+    file_name = "admin-error.log"
+    log_group_retention = 7
+  }
 
-	"wlserver1-log" = {
-		file_path = "NFSPATH/running-servers/wlserver1/logs"
-		file_name = "wlserver1.log"
-		log_group_retention = 7
-	}
+  "wlserver1-access" = {
+    file_path = "NFSPATH/running-servers/wlserver1/logs"
+    file_name = "access.log"
+    log_group_retention = 7
+  }
 
-	"wlserver1-out" = {
-		file_path = "NFSPATH/running-servers/wlserver1/logs"
-		file_name = "wlserver1.out"
-		log_group_retention = 7
-	}
+  "wlserver1-log" = {
+    file_path = "NFSPATH/running-servers/wlserver1/logs"
+    file_name = "wlserver1.log"
+    log_group_retention = 7
+  }
 
-	"wlserver2-access" = {
-		file_path = "NFSPATH/running-servers/wlserver2/logs"
-		file_name = "access.log"
-		log_group_retention = 7
-	}
+  "wlserver1-out" = {
+    file_path = "NFSPATH/running-servers/wlserver1/logs"
+    file_name = "wlserver1.out"
+    log_group_retention = 7
+  }
 
-	"wlserver2-log" = {
-		file_path = "NFSPATH/running-servers/wlserver2/logs"
-		file_name = "wlserver2.log"
-		log_group_retention = 7
-	}
+  "wlserver2-access" = {
+    file_path = "NFSPATH/running-servers/wlserver2/logs"
+    file_name = "access.log"
+    log_group_retention = 7
+  }
 
-	"wlserver2-out" = {
-		file_path = "NFSPATH/running-servers/wlserver2/logs"
-		file_name = "wlserver2.out"
-		log_group_retention = 7
-	}
+  "wlserver2-log" = {
+    file_path = "NFSPATH/running-servers/wlserver2/logs"
+    file_name = "wlserver2.log"
+    log_group_retention = 7
+  }
 
-	"wladmin-access" = {
-		file_path = "NFSPATH/running-servers/wladmin/logs"
-		file_name = "access.log"
-		log_group_retention = 7
-	}
+  "wlserver2-out" = {
+    file_path = "NFSPATH/running-servers/wlserver2/logs"
+    file_name = "wlserver2.out"
+    log_group_retention = 7
+  }
 
-	"wladmin-log" = {
-		file_path = "NFSPATH/running-servers/wladmin/logs"
-		file_name = "wladmin.log"
-		log_group_retention = 7
-	}
+  "wladmin-access" = {
+    file_path = "NFSPATH/running-servers/wladmin/logs"
+    file_name = "access.log"
+    log_group_retention = 7
+  }
 
-	"wladmin-cicdomain" = {
-		file_path = "NFSPATH/running-servers/wladmin/logs"
-		file_name = "cicdomain.out"
-		log_group_retention = 7
-	}
+  "wladmin-log" = {
+    file_path = "NFSPATH/running-servers/wladmin/logs"
+    file_name = "wladmin.log"
+    log_group_retention = 7
+  }
+
+  "wladmin-cicdomain" = {
+    file_path = "NFSPATH/running-servers/wladmin/logs"
+    file_name = "cicdomain.out"
+    log_group_retention = 7
+  }
 }
