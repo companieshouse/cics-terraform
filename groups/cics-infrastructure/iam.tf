@@ -4,7 +4,7 @@ module "cics_profile" {
   name       = "cics-profile"
   enable_SSM = true
 
-  s3_buckets_write  = [local.session_manager_bucket_name]
+  s3_buckets_write = [local.session_manager_bucket_name]
 
   kms_key_refs = [
     "alias/${var.account}/${var.region}/ebs",

@@ -11,7 +11,7 @@ resource "aws_route53_record" "cics_app" {
 }
 
 resource "aws_route53_record" "cics_admin" {
-  count = var.cics_asg_count
+  count   = var.cics_asg_count
   zone_id = data.aws_route53_zone.private_zone.zone_id
   name    = "${var.application}-admin-${count.index + 1}"
   type    = "A"
