@@ -11,6 +11,20 @@ module "cics_profile" {
     local.ssm_kms_key_id
   ]
 
+  cw_log_group_arns = length(local.log_groups) > 0 ? flatten([
+    formatlist(
+      "arn:aws:logs:%s:%s:log-group:%s:*:*",
+      var.aws_region,
+      data.aws_caller_identity.current.account_id,
+      local.log_groups
+    ),
+    formatlist("arn:aws:logs:%s:%s:log-group:%s:*",
+      var.aws_region,
+      data.aws_caller_identity.current.account_id,
+      local.log_groups
+    ),
+  ]) : null
+
   custom_statements = [
     {
       sid    = "AllowAccessToConfigBucket",

@@ -138,3 +138,11 @@ module "cics2_asg" {
     })
   )
 }
+
+resource "aws_cloudwatch_log_group" "cics_log_groups" {
+  for_each = local.cloudwatch_logs
+
+  name              = each.value["log_group_name"]
+  retention_in_days = lookup(each.value, "log_group_retention", var.default_log_group_retention_in_days)
+  kms_key_id        = lookup(each.value, "kms_key_id", local.logs_kms_key_id)
+}
