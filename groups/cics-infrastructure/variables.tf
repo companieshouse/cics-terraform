@@ -160,3 +160,15 @@ variable "nfs_mounts" {
   # }
   #
 }
+
+variable "default_log_group_retention_in_days" {
+  type        = number
+  default     = 14
+  description = "Total days to retain logs in CloudWatch log group if not specified for specific logs"
+}
+
+variable "cloudwatch_logs" {
+  type        = map(any)
+  description = "Map of log file information; used to create log groups, IAM permissions and passed to the application to configure remote logging"
+  default     = {}
+}

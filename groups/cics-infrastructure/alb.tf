@@ -89,7 +89,7 @@ resource "aws_lb_listener" "cics_https" {
   load_balancer_arn = aws_lb.cics.arn
   port              = "443"
   protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  ssl_policy        = "ELBSecurityPolicy-2016-08" #tfsec:ignore:AWS010
   certificate_arn   = data.aws_acm_certificate.acm_cert.arn
 
   default_action {

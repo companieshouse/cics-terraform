@@ -42,6 +42,10 @@ data "aws_acm_certificate" "acm_cert" {
   domain = var.domain_name
 }
 
+data "vault_generic_secret" "kms_keys" {
+  path = "aws-accounts/${var.aws_account}/kms"
+}
+
 data "vault_generic_secret" "security_kms_keys" {
   path = "aws-accounts/security/kms"
 }
