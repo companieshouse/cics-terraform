@@ -38,5 +38,6 @@ locals {
     mounts                     = var.nfs_mounts
     install_watcher_service    = false
     cw_log_files               = local.cloudwatch_logs
+    cw_agent_user              = "root"
   }
 }
