@@ -45,14 +45,14 @@ resource "aws_autoscaling_schedule" "cics-schedule-stop-cics1" {
 }
 
 resource "aws_autoscaling_schedule" "cics-schedule-stop-cics2" {
-  count = var.environment == "live" ? 0 : cics_asg_count-1
+  count = var.environment == "live" ? 0 : var.cics_asg_count -1
   
   scheduled_action_name  = "${var.aws_account}-${var.application}-scheduled-shutdown"
   min_size               = 0
   max_size               = 0
   desired_capacity       = 0
   recurrence             = "00 20 * * 1-5" #Mon-Fri at 8pm
-  autoscaling_group_name = module.cics2_asg.this_autoscaling_group_name
+  autoscaling_group_name = module.cics2_asg[0].this_autoscaling_group_name
 }
 
 # ASG Scheduled Startup for non-production
@@ -65,17 +65,18 @@ resource "aws_autoscaling_schedule" "cics-schedule-start-cics1" {
   desired_capacity       = var.cics_desired_capacity
   recurrence             = "00 06 * * 1-5" #Mon-Fri at 6am
   autoscaling_group_name = module.cics1_asg.this_autoscaling_group_name
+
 }
 
 resource "aws_autoscaling_schedule" "cics-schedule-start-cics2" {
-  count = var.environment == "live" ? 0 : cics_asg_count-1
+  count = var.environment == "live" ? 0 : var.cics_asg_count -1
 
   scheduled_action_name  = "${var.aws_account}-${var.application}-scheduled-startup"
   min_size               = var.cics_min_size
   max_size               = var.cics_max_size
   desired_capacity       = var.cics_desired_capacity
   recurrence             = "00 06 * * 1-5" #Mon-Fri at 6am
-  autoscaling_group_name = module.cics2_asg.this_autoscaling_group_name
+  autoscaling_group_name = module.cics2_asg[0].this_autoscaling_group_name
 }
 
 # ASG Module for cics1
