@@ -52,6 +52,12 @@ variable "application" {
   description = "The name of the application"
 }
 
+variable "application_type" {
+  type        = string
+  default     = "cics"
+  description = "The parent name of the application"
+}
+
 variable "environment" {
   type        = string
   description = "The name of the environment"
