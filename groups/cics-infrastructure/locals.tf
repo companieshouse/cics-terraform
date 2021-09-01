@@ -28,6 +28,7 @@ locals {
   default_tags = {
     Terraform   = "true"
     Application = upper(var.application)
+    ApplicationType = upper(var.application_type)
     Region      = var.aws_region
     Account     = var.aws_account
   }
