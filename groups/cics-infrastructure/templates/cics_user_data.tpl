@@ -15,3 +15,7 @@ echo '${ANSIBLE_INPUTS}' | jq --arg APP_INSTANCE_NAME "$APP_INSTANCE_NAME"  'wal
 /usr/local/bin/ansible-playbook /root/deployment.yml -e '@/root/ansible_inputs.json'
 
 su -l ec2-user bootstrap
+
+#Update Nagios registration script with relevant template
+cp /usr/local/bin/nagios-host-add.sh /usr/local/bin/nagios-host-add.j2
+REPLACE=CICs_${HERITAGE_ENVIRONMENT} /usr/local/bin/j2 /usr/local/bin/nagios-host-add.j2 > /usr/local/bin/nagios-host-add.sh
