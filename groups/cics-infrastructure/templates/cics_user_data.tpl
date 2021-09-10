@@ -8,6 +8,10 @@ AVAILABILITY_ZONE=$(curl -s http://169.254.169.254/latest/meta-data/placement/av
 EC2_REGION=$${AVAILABILITY_ZONE::-1}
 APP_INSTANCE_NAME=$( aws ec2 describe-tags --filters "Name=resource-id,Values=$EC2_INSTANCE_ID" "Name=key,Values=app-instance-name"  --region $EC2_REGION | jq -r '.Tags[]//[]|select(.Key=="app-instance-name")|.Value' )
 
+# Allow permissive selinux permissions to nrpe
+semanage permissive -a nrpe_t
+semanage permissive -a systemd_logind_t
+
 #Update Nagios registration script with relevant template
 cp /usr/local/bin/nagios-host-add.sh /usr/local/bin/nagios-host-add.j2
 REPLACE=CICs_${HERITAGE_ENVIRONMENT} /usr/local/bin/j2 /usr/local/bin/nagios-host-add.j2 > /usr/local/bin/nagios-host-add.sh
