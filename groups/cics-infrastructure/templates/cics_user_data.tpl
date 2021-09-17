@@ -21,7 +21,7 @@ echo '${ANSIBLE_INPUTS}' | jq --arg APP_INSTANCE_NAME "$APP_INSTANCE_NAME"  'wal
 su -l ec2-user bootstrap
 
 # Allow permissive selinux permissions to nrpe
-#semanage permissive -a nrpe_t
-#semanage permissive -a systemd_logind_t
+semanage permissive -a nrpe_t
+semanage permissive -a systemd_logind_t
 
 mv /usr/local/bin/check_docker /usr/lib64/nagios/plugins/check_docker
