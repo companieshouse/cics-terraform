@@ -13,7 +13,7 @@ environment = "staging"
 
 # ASG settings
 cics_asg_count = 1
-cics_instance_size = "t3.medium"
+cics_instance_size = "t3.large"
 
 # CVO NFS Mounts
 nfs_server = "192.168.255.19"
