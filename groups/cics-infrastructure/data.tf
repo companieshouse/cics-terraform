@@ -21,6 +21,13 @@ data "aws_security_group" "nagios_shared" {
   }
 }
 
+data "aws_security_group" "chips_control" {
+  filter {
+    name   = "group-name"
+    values = ["sgr-chips-control-asg-001-*"]
+  }
+}
+
 data "aws_route53_zone" "private_zone" {
   name         = local.internal_fqdn
   private_zone = true

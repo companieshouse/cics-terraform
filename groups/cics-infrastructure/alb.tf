@@ -8,6 +8,17 @@ module "cics_internal_alb_security_group" {
 
   ingress_cidr_blocks = local.admin_cidrs
   ingress_rules       = ["http-80-tcp", "https-443-tcp"]
+
+  ingress_with_source_security_group_id = [
+    {
+      from_port                = 443
+      to_port                  = 443
+      protocol                 = "tcp"
+      description              = "HTTPS from chips-control"
+      source_security_group_id = data.aws_security_group.chips_control.id
+    }
+  ]
+
   egress_rules        = ["all-all"]
 }
 
