@@ -117,9 +117,7 @@ module "cics1_asg" {
   force_delete                   = true
   enable_instance_refresh        = true
   refresh_min_healthy_percentage = 50
-  refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
-  termination_policies           = ["OldestLaunchConfiguration"]
   target_group_arns = [
     aws_lb_target_group.cics_app[0].arn,
     aws_lb_target_group.cics_app[1].arn,
