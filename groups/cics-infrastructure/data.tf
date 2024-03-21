@@ -45,6 +45,10 @@ data "vault_generic_secret" "cics_ec2_data" {
   path = "applications/${var.aws_account}-${var.aws_region}/${var.application}/ec2"
 }
 
+data "vault_generic_secret" "nfs_mounts" {
+  path = "applications/${var.aws_account}-${var.aws_region}/${var.application}/app/nfs_mounts"
+}
+
 data "aws_acm_certificate" "acm_cert" {
   domain = var.domain_name
 }

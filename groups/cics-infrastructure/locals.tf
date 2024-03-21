@@ -11,9 +11,10 @@ locals {
 
   security_s3_data            = data.vault_generic_secret.security_s3_buckets.data
   session_manager_bucket_name = local.security_s3_data["session-manager-bucket-name"]
+  nfs_mounts                  = jsondecode(data.vault_generic_secret.nfs_mounts.data["${var.application}-mounts"])
 
   #For each log map passed, add an extra kv for the log group name and append the NFS directory into the filepath where required
-  log_directory_prefix = format("%s/%s", var.nfs_mount_destination_parent_dir, var.nfs_mounts["cics"]["local_mount_point"])
+  log_directory_prefix = format("%s/%s", var.nfs_mount_destination_parent_dir, lookup(local.nfs_mounts["application_root"], "local_mount_point", ""))
   cloudwatch_logs = {
     for log, map in var.cloudwatch_logs :
     log => merge(map, {
@@ -34,9 +35,8 @@ locals {
   }
 
   userdata_ansible_inputs = {
-    default_nfs_server_address = var.nfs_server
     mounts_parent_dir          = var.nfs_mount_destination_parent_dir
-    mounts                     = var.nfs_mounts
+    mounts                     = local.nfs_mounts
     install_watcher_service    = false
     cw_log_files               = local.cloudwatch_logs
     cw_agent_user              = "root"

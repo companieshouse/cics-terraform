@@ -81,11 +81,11 @@ resource "aws_autoscaling_schedule" "cics-schedule-start-cics2" {
 
 # ASG Module for cics1
 module "cics1_asg" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/terraform-aws-autoscaling?ref=tags/1.0.36"
+  source = "git@github.com:companieshouse/terraform-modules//aws/autoscaling-with-launch-template?ref=tags/1.0.244"
 
   name = "${var.application}1"
-  # Launch configuration
-  lc_name       = "${var.application}1-launchconfig"
+  # Launch template configuration
+  lt_name       = "${var.application}1-launchtemplate"
   image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
@@ -94,11 +94,16 @@ module "cics1_asg" {
   ]
   root_block_device = [
     {
-      volume_size = "40"
-      volume_type = "gp2"
+      volume_size = var.instance_root_volume_size
       encrypted   = true
-      iops        = 0
-    },
+    }
+  ]
+  block_device_mappings = [
+    {
+      device_name = "/dev/xvdb"
+      encrypted   = true
+      volume_size = var.instance_swap_volume_size
+    }
   ]
   # Auto scaling group
   asg_name                       = "${var.application}1-asg"
@@ -112,9 +117,7 @@ module "cics1_asg" {
   force_delete                   = true
   enable_instance_refresh        = true
   refresh_min_healthy_percentage = 50
-  refresh_triggers               = ["launch_configuration"]
   key_name                       = aws_key_pair.cics_keypair.key_name
-  termination_policies           = ["OldestLaunchConfiguration"]
   target_group_arns = [
     aws_lb_target_group.cics_app[0].arn,
     aws_lb_target_group.cics_app[1].arn,
@@ -122,6 +125,7 @@ module "cics1_asg" {
   ]
   iam_instance_profile = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64     = data.template_cloudinit_config.cics_userdata_config.rendered
+  enforce_imdsv2       = true
 
   tags_as_map = merge(
     local.default_tags,
@@ -134,12 +138,12 @@ module "cics1_asg" {
 
 # ASG Module for cics2
 module "cics2_asg" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/terraform-aws-autoscaling?ref=tags/1.0.36"
+  source = "git@github.com:companieshouse/terraform-modules//aws/autoscaling-with-launch-template?ref=tags/1.0.244"
 
   count = var.cics_asg_count > 1 ? 1 : 0
   name  = "${var.application}2"
-  # Launch configuration
-  lc_name       = "${var.application}2-launchconfig"
+  # Launch template configuration
+  lt_name       = "${var.application}2-launchtemplate"
   image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
@@ -148,11 +152,16 @@ module "cics2_asg" {
   ]
   root_block_device = [
     {
-      volume_size = "40"
-      volume_type = "gp2"
+      volume_size = var.instance_root_volume_size
       encrypted   = true
-      iops        = 0
-    },
+    }
+  ]
+  block_device_mappings = [
+    {
+      device_name = "/dev/xvdb"
+      encrypted   = true
+      volume_size = var.instance_swap_volume_size
+    }
   ]
   # Auto scaling group
   asg_name                       = "${var.application}2-asg"
@@ -176,6 +185,7 @@ module "cics2_asg" {
   ]
   iam_instance_profile = module.cics_profile.aws_iam_instance_profile.name
   user_data_base64     = data.template_cloudinit_config.cics_userdata_config.rendered
+  enforce_imdsv2       = true
 
   tags_as_map = merge(
     local.default_tags,

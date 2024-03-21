@@ -15,16 +15,6 @@ environment = "live"
 cics_asg_count = 2
 cics_instance_size = "t3.large"
 
-# CVO NFS Mounts
-nfs_server = "192.168.255.35"
-nfs_mount_destination_parent_dir = "/mnt/nfs"
-nfs_mounts = {
-  cics = {
-    local_mount_point = "cics"
-  }
-}
-
-
 ############################################
 # Log entries to be aggregated in Cloudwatch Logs
 # 'NFSPATH' file_path in file_path keys will be templated with the full path to the application instances mounted share folder (e.g. /mnt/nfs/cics/cics1 )
