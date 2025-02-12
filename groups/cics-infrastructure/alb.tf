@@ -30,6 +30,12 @@ resource "aws_lb" "cics" {
   subnets            = data.aws_subnet_ids.application.ids
 
   enable_deletion_protection = false
+
+  access_logs {
+    bucket  = local.elb_access_logs_bucket_name
+    prefix  = local.elb_access_logs_prefix
+    enabled = true
+  }
 }
 
 resource "aws_lb_target_group" "cics_app" {
