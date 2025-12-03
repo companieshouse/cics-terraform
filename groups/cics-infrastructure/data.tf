@@ -6,8 +6,12 @@ data "aws_vpc" "vpc" {
   }
 }
 
-data "aws_subnet_ids" "application" {
-  vpc_id = data.aws_vpc.vpc.id
+data "aws_subnets" "application" {
+
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.vpc.id]
+  }
   filter {
     name   = "tag:Name"
     values = ["sub-application-*"]
