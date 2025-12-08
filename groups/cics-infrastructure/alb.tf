@@ -21,7 +21,12 @@ module "cics_internal_alb_security_group" {
 
   egress_rules        = ["all-all"]
 
-  tags = local.default_tags
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "sgr-${var.application}-internal-alb-001"
+    }
+  )
 }
 
 resource "aws_lb" "cics" {
@@ -39,7 +44,12 @@ resource "aws_lb" "cics" {
     enabled = true
   }
 
-  tags = local.default_tags
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "alb-${var.application}-internal-001"
+    }
+  )
 }
 
 resource "aws_lb_target_group" "cics_app" {

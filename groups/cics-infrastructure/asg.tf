@@ -31,7 +31,12 @@ module "cics_asg_security_group" {
 
   egress_rules = ["all-all"]
 
-  tags = local.default_tags
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "sgr-${var.application}-asg-001"
+    }
+  )
 }
 
 # ASG Scheduled Shutdown for non-production
