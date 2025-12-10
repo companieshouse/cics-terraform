@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 module "cics_asg_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 3.0"
+  version = "~> 5.0"
 
   name        = "sgr-${var.application}-asg-001"
   description = "Security group for the ${var.application} asg"
@@ -18,18 +18,25 @@ module "cics_asg_security_group" {
       to_port                  = var.cics_application_port
       protocol                 = "tcp"
       description              = "Apache port"
-      source_security_group_id = module.cics_internal_alb_security_group.this_security_group_id
+      source_security_group_id = module.cics_internal_alb_security_group.security_group_id
     },
     {
       from_port                = var.cics_admin_port
       to_port                  = var.cics_admin_port
       protocol                 = "tcp"
       description              = "WebLogic administration console port"
-      source_security_group_id = module.cics_internal_alb_security_group.this_security_group_id
+      source_security_group_id = module.cics_internal_alb_security_group.security_group_id
     }
   ]
 
   egress_rules = ["all-all"]
+
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "sgr-${var.application}-asg-001"
+    }
+  )
 }
 
 # ASG Scheduled Shutdown for non-production
@@ -45,8 +52,8 @@ resource "aws_autoscaling_schedule" "cics-schedule-stop-cics1" {
 }
 
 resource "aws_autoscaling_schedule" "cics-schedule-stop-cics2" {
-  count = var.environment == "live" ? 0 : var.cics_asg_count -1
-  
+  count = var.environment == "live" ? 0 : var.cics_asg_count - 1
+
   scheduled_action_name  = "${var.aws_account}-${var.application}-scheduled-shutdown"
   min_size               = 0
   max_size               = 0
@@ -58,7 +65,7 @@ resource "aws_autoscaling_schedule" "cics-schedule-stop-cics2" {
 # ASG Scheduled Startup for non-production
 resource "aws_autoscaling_schedule" "cics-schedule-start-cics1" {
   count = var.environment == "live" ? 0 : 1
-  
+
   scheduled_action_name  = "${var.aws_account}-${var.application}-scheduled-startup"
   min_size               = var.cics_min_size
   max_size               = var.cics_max_size
@@ -69,7 +76,7 @@ resource "aws_autoscaling_schedule" "cics-schedule-start-cics1" {
 }
 
 resource "aws_autoscaling_schedule" "cics-schedule-start-cics2" {
-  count = var.environment == "live" ? 0 : var.cics_asg_count -1
+  count = var.environment == "live" ? 0 : var.cics_asg_count - 1
 
   scheduled_action_name  = "${var.aws_account}-${var.application}-scheduled-startup"
   min_size               = var.cics_min_size
@@ -81,7 +88,7 @@ resource "aws_autoscaling_schedule" "cics-schedule-start-cics2" {
 
 # ASG Module for cics1
 module "cics1_asg" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/autoscaling-with-launch-template?ref=tags/1.0.244"
+  source = "git@github.com:companieshouse/terraform-modules//aws/autoscaling-with-launch-template?ref=tags/1.0.361"
 
   name = "${var.application}1"
   # Launch template configuration
@@ -89,7 +96,7 @@ module "cics1_asg" {
   image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
-    module.cics_asg_security_group.this_security_group_id,
+    module.cics_asg_security_group.security_group_id,
     data.aws_security_group.nagios_shared.id
   ]
   root_block_device = [
@@ -107,7 +114,7 @@ module "cics1_asg" {
   ]
   # Auto scaling group
   asg_name                       = "${var.application}1-asg"
-  vpc_zone_identifier            = data.aws_subnet_ids.application.ids
+  vpc_zone_identifier            = data.aws_subnets.application.ids
   health_check_type              = "EC2"
   min_size                       = var.cics_min_size
   max_size                       = var.cics_max_size
@@ -138,7 +145,7 @@ module "cics1_asg" {
 
 # ASG Module for cics2
 module "cics2_asg" {
-  source = "git@github.com:companieshouse/terraform-modules//aws/autoscaling-with-launch-template?ref=tags/1.0.244"
+  source = "git@github.com:companieshouse/terraform-modules//aws/autoscaling-with-launch-template?ref=tags/1.0.361"
 
   count = var.cics_asg_count > 1 ? 1 : 0
   name  = "${var.application}2"
@@ -147,7 +154,7 @@ module "cics2_asg" {
   image_id      = data.aws_ami.cics.id
   instance_type = var.cics_instance_size
   security_groups = [
-    module.cics_asg_security_group.this_security_group_id,
+    module.cics_asg_security_group.security_group_id,
     data.aws_security_group.nagios_shared.id
   ]
   root_block_device = [
@@ -165,7 +172,7 @@ module "cics2_asg" {
   ]
   # Auto scaling group
   asg_name                       = "${var.application}2-asg"
-  vpc_zone_identifier            = data.aws_subnet_ids.application.ids
+  vpc_zone_identifier            = data.aws_subnets.application.ids
   health_check_type              = "EC2"
   min_size                       = var.cics_min_size
   max_size                       = var.cics_max_size

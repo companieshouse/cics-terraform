@@ -1,6 +1,6 @@
 module "cics_internal_alb_security_group" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 3.0"
+  version = "~> 5.0"
 
   name        = "sgr-${var.application}-internal-alb-001"
   description = "Security group for the ${var.application} servers"
@@ -19,15 +19,22 @@ module "cics_internal_alb_security_group" {
     }
   ]
 
-  egress_rules        = ["all-all"]
+  egress_rules = ["all-all"]
+
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "sgr-${var.application}-internal-alb-001"
+    }
+  )
 }
 
 resource "aws_lb" "cics" {
   name               = "alb-${var.application}-internal-001"
   internal           = true
   load_balancer_type = "application"
-  security_groups    = [module.cics_internal_alb_security_group.this_security_group_id]
-  subnets            = data.aws_subnet_ids.application.ids
+  security_groups    = [module.cics_internal_alb_security_group.security_group_id]
+  subnets            = data.aws_subnets.application.ids
 
   enable_deletion_protection = true
 
@@ -36,6 +43,13 @@ resource "aws_lb" "cics" {
     prefix  = local.elb_access_logs_prefix
     enabled = true
   }
+
+  tags = merge(
+    local.default_tags,
+    {
+      Name = "alb-${var.application}-internal-001"
+    }
+  )
 }
 
 resource "aws_lb_target_group" "cics_app" {
