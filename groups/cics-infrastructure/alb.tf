@@ -19,7 +19,7 @@ module "cics_internal_alb_security_group" {
     }
   ]
 
-  egress_rules        = ["all-all"]
+  egress_rules = ["all-all"]
 
   tags = merge(
     local.default_tags,

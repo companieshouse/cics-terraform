@@ -52,7 +52,7 @@ resource "aws_autoscaling_schedule" "cics-schedule-stop-cics1" {
 }
 
 resource "aws_autoscaling_schedule" "cics-schedule-stop-cics2" {
-  count = var.environment == "live" ? 0 : var.cics_asg_count -1
+  count = var.environment == "live" ? 0 : var.cics_asg_count - 1
 
   scheduled_action_name  = "${var.aws_account}-${var.application}-scheduled-shutdown"
   min_size               = 0
@@ -76,7 +76,7 @@ resource "aws_autoscaling_schedule" "cics-schedule-start-cics1" {
 }
 
 resource "aws_autoscaling_schedule" "cics-schedule-start-cics2" {
-  count = var.environment == "live" ? 0 : var.cics_asg_count -1
+  count = var.environment == "live" ? 0 : var.cics_asg_count - 1
 
   scheduled_action_name  = "${var.aws_account}-${var.application}-scheduled-startup"
   min_size               = var.cics_min_size

@@ -30,19 +30,20 @@ locals {
   log_groups = compact([for log, map in local.cloudwatch_logs : lookup(map, "log_group_name", "")])
 
   default_tags = {
-    Terraform   = "true"
-    Application = upper(var.application)
+    Terraform       = "true"
+    Application     = upper(var.application)
     ApplicationType = upper(var.application_type)
-    Region      = var.aws_region
-    Account     = var.aws_account
-    Repository  = "cics-terraform"
+    Region          = var.aws_region
+    Account         = var.aws_account
+    Repository      = "cics-terraform"
+    Environment     = var.environment
   }
 
   userdata_ansible_inputs = {
-    mounts_parent_dir          = var.nfs_mount_destination_parent_dir
-    mounts                     = local.nfs_mounts
-    install_watcher_service    = false
-    cw_log_files               = local.cloudwatch_logs
-    cw_agent_user              = "root"
+    mounts_parent_dir       = var.nfs_mount_destination_parent_dir
+    mounts                  = local.nfs_mounts
+    install_watcher_service = false
+    cw_log_files            = local.cloudwatch_logs
+    cw_agent_user           = "root"
   }
 }

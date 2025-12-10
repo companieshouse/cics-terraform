@@ -93,7 +93,7 @@ data "template_file" "cics_userdata" {
   vars = {
     REGION               = var.aws_region
     HERITAGE_ENVIRONMENT = title(var.environment)
-    ANSIBLE_INPUTS = jsonencode(local.userdata_ansible_inputs)
+    ANSIBLE_INPUTS       = jsonencode(local.userdata_ansible_inputs)
   }
 }
 
