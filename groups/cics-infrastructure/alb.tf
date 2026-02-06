@@ -29,7 +29,7 @@ resource "aws_lb" "cics" {
   security_groups    = [module.cics_internal_alb_security_group.this_security_group_id]
   subnets            = data.aws_subnet_ids.application.ids
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false
 
   access_logs {
     bucket  = local.elb_access_logs_bucket_name
